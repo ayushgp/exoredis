@@ -1,7 +1,7 @@
 # Makefile for the socket programming example
 #
 
-server_objects = ServerSocket.o Socket.o server_main.o
+server_objects = ServerSocket.o Socket.o QueryProcessing.o server_main.o
 
 all : server
 
@@ -10,6 +10,7 @@ server: $(server_objects)
 
 Socket: Socket.cpp
 ServerSocket: ServerSocket.cpp
+QueryProcessing: QueryProcessing.cpp
 server_main: server_main.cpp
 
 clean:
