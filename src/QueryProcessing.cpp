@@ -51,7 +51,7 @@ void split_in_args(str_vector& qargs, std::string command){
 std::string wrong_args_error(std::string command){
         return "-ERR wrong number of arguments for '"+command+"' command\n\r";
 }
-std::string process_query(std::string query, KV_map& kv_map, BIT_map& bit_map, ZSET_map& zset_map){
+std::string process_query(std::string query, KV_map& kv_map, ZSET_map& zset_map){
 
                 std::vector<std::string> qargs;
                 try{
@@ -88,6 +88,48 @@ std::string process_query(std::string query, KV_map& kv_map, BIT_map& bit_map, Z
                                         return "$-1\n\r";
                                 }
                         }
+                }
+                else if(!qargs[0].compare("getbit")){
+                        if(qargs.size() == 3){
+                                try {
+                                        kv_string result = kv_map.at(qargs[1]);
+                                        std::stringstream ss;
+                                        int bit = atoi(qargs[2].c_str());
+                                        ss << ":" << (result.value[bit] & 1<<((bit%8))) <<"\n\r";
+                                        return ss.str();
+                                }
+                                catch(const std::out_of_range& oor){
+                                        return ":0\n\r";
+                                }
+                        }
+                        else
+                                return wrong_args_error("getbit");
+                }
+                else if(!qargs[0].compare("setbit")){
+                        if(qargs.size() == 4){
+
+                        }
+                        else
+                                return wrong_args_error("getbit");
+                }
+                else if(!qargs[0].compare("zadd")){
+
+                }
+                else if(!qargs[0].compare("zrange")){
+
+                }
+                else if(!qargs[0].compare("zcard")){
+
+                }
+                else if(!qargs[0].compare("zcount")){
+
+                }
+                else if(!qargs[0].compare("save")){
+                        if(qargs.size() == 1){
+                                return "Saved changes to ./.exoredis.edb";
+                        }
+                        else
+                                return wrong_args_error("save");
                 }
                 else {
                         return "Command not found!";

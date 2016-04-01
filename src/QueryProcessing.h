@@ -12,9 +12,8 @@
 
 typedef std::vector<std::string> str_vector;
 typedef std::map <std::string, kv_string> KV_map;
-typedef std::map <std::string, kv_bool> BIT_map;
 typedef std::map <std::string, zset> ZSET_map;
 
 void split_in_args(str_vector& qargs, std::string command);
 
-std::string process_query(std::string query, KV_map& kv_map, BIT_map& bit_map, ZSET_map& zset_map);
+std::string process_query(std::string query, KV_map& kv_map, ZSET_map& zset_map);

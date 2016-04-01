@@ -32,7 +32,6 @@ int main ( int argc, char* argv[] ) {
         }
 
         std::map <std::string, kv_string> kv_map;
-        std::map <std::string, kv_bool> bit_map;
         std::map <std::string, zset> zset_map;
 
         // import_from_file(dump_file_path ,kv_map, bit_map, zset_map);
@@ -49,7 +48,7 @@ int main ( int argc, char* argv[] ) {
                                 while(true) {
                                         std::string data;
                                         new_sock >> data;
-                                        res = process_query(data, kv_map, bit_map, zset_map);
+                                        res = process_query(data, kv_map, zset_map);
                                         new_sock << res;
                                 }
                         }
