@@ -31,14 +31,14 @@ int main ( int argc, char* argv[] ) {
                 }
         }
 
+        //Declare the structures
         std::map <std::string, kv_string> kv_map;
         std::map <std::string, zset> zset_map;
-
-        // import_from_file(dump_file_path ,kv_map, bit_map, zset_map);
 
         try {
                 // Create the socket
                 ServerSocket server ( 15000 );
+                // std::signal(SIGINT, close_connection);
                 std::cout << "ExoRedis server running on 0.0.0.0:15000" << std::endl;
                 std::string res;
                 while(true) {

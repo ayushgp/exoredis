@@ -48,9 +48,22 @@ void split_in_args(str_vector& qargs, std::string command){
         }
 }
 
-std::string wrong_args_error(std::string command){
+void set_bit( std::string& s, int i ) {
+	int sl = s.length();
+	int x = i/8;
+	if(sl<x){
+		for( int j = x-sl; j >= 0; j-- ) {
+			s += '\x00';
+		}
+	}
+	s[x] |= 1 << (7-(i%8));
+}
+
+
+std::string wrong_args_error(std::string command) {
         return "-ERR wrong number of arguments for '"+command+"' command\n\r";
 }
+
 std::string process_query(std::string query, KV_map& kv_map, ZSET_map& zset_map){
 
                 std::vector<std::string> qargs;
@@ -95,7 +108,12 @@ std::string process_query(std::string query, KV_map& kv_map, ZSET_map& zset_map)
                                         kv_string result = kv_map.at(qargs[1]);
                                         std::stringstream ss;
                                         int bit = atoi(qargs[2].c_str());
-                                        ss << ":" << (result.value[bit] & 1<<((bit%8))) <<"\n\r";
+                                        if(bit/8<result.value.length()) {
+                                                bool shifter = result.value[bit] & (1 << (8 - bit % 8 - 1));
+                                                ss << ":" << shifter << (result.value)[bit/8] <<"\n\r";
+                                        }
+                                        else
+                                                ss << ":0\n\r";
                                         return ss.str();
                                 }
                                 catch(const std::out_of_range& oor){
@@ -107,13 +125,34 @@ std::string process_query(std::string query, KV_map& kv_map, ZSET_map& zset_map)
                 }
                 else if(!qargs[0].compare("setbit")){
                         if(qargs.size() == 4){
-
+                                try {
+                                        kv_string result = kv_map.at(qargs[1]);
+                                        std::stringstream ss;
+                                        int bit = atoi(qargs[2].c_str());
+                                        ss << ":" << (result.value[bit] & 1<<((bit%8))) <<"\n\r";
+                                        return ss.str();
+                                }
+                                catch(const std::out_of_range& oor){
+                                        return ":0\n\r";
+                                }
                         }
                         else
                                 return wrong_args_error("getbit");
                 }
                 else if(!qargs[0].compare("zadd")){
-
+                        if(qargs.size() == 4){
+                                try {
+                                        zset result = zset_map.at(qargs[1]);
+                                        int bit = atoi(qargs[2].c_str());
+                                        ss << ":" << (result.value[bit] & 1<<((bit%8))) <<"\n\r";
+                                        return ss.str();
+                                }
+                                catch(const std::out_of_range& oor){
+                                        return ":0\n\r";
+                                }
+                        }
+                        else
+                                return wrong_args_error("zadd");
                 }
                 else if(!qargs[0].compare("zrange")){
 
